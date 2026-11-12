@@ -1,0 +1,108 @@
+<!doctype html>
+<html lang="tr">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Tribün</title>
+<style>
+  html,body{margin:0;height:100%;background:#000;overflow:hidden;font-family:system-ui,-apple-system,"Segoe UI",Roboto,Arial,sans-serif}
+  /* Sahne her zaman 1080x1920 çizilir; pencere farklıysa yalnızca ölçeklenir (yayın kaynağı 1080x1920 ise birebir, bulanıklık olmaz) */
+  #cerceve{position:absolute;left:50%;top:50%;width:1080px;height:1920px;transform-origin:center;overflow:hidden;background:#05070f}
+  #c{position:absolute;inset:0;width:1080px;height:1920px;display:block}
+  #hud{position:absolute;inset:0;color:#fff;pointer-events:none;text-rendering:geometricPrecision;-webkit-font-smoothing:antialiased}
+  .golge{text-shadow:0 2px 0 rgba(0,0,0,.55),0 0 14px rgba(0,0,0,.6)}
+
+  #skor{position:absolute;left:50%;top:150px;transform:translateX(-50%);display:flex;align-items:stretch;height:104px;border-radius:22px;overflow:hidden;
+    background:rgba(8,12,26,.86);box-shadow:0 10px 40px rgba(0,0,0,.5),inset 0 0 0 2px rgba(255,255,255,.1)}
+  .tk{display:flex;align-items:center;gap:16px;padding:0 24px;min-width:300px}
+  .tk.b{flex-direction:row-reverse;text-align:right}
+  .tk .renk{width:16px;height:70px;border-radius:8px;box-shadow:inset 0 0 0 2px rgba(255,255,255,.35)}
+  .tk .ad{font-size:38px;font-weight:900;letter-spacing:.5px;line-height:1}
+  .tk .kisi{font-size:22px;font-weight:700;opacity:.8;margin-top:8px}
+  #sayi{display:flex;flex-direction:column;align-items:center;justify-content:center;padding:0 22px;background:rgba(255,255,255,.08);min-width:170px}
+  #sayi b{font-size:58px;font-weight:900;line-height:1;font-variant-numeric:tabular-nums}
+  #sayi span{font-size:22px;font-weight:800;color:#ffd23f;margin-top:4px;font-variant-numeric:tabular-nums}
+
+  #olcer{position:absolute;left:50%;top:272px;transform:translateX(-50%);width:820px}
+  #olcer .cubuk{height:22px;border-radius:11px;overflow:hidden;display:flex;background:#111;box-shadow:inset 0 0 0 2px rgba(255,255,255,.25),0 4px 16px rgba(0,0,0,.5)}
+  #olcer .cubuk i{display:block;height:100%;transition:width .5s}
+  #olcer .yazi{text-align:center;font-size:20px;font-weight:800;letter-spacing:3px;margin-top:6px;opacity:.9}
+
+  #ipucu{position:absolute;left:50%;top:338px;transform:translateX(-50%);white-space:nowrap;font-size:26px;font-weight:800;padding:8px 22px;border-radius:20px;
+    background:rgba(8,12,26,.7);transition:opacity .4s}
+  #ipucu b{color:#ffd23f}
+
+  #akis{position:absolute;left:22px;top:410px;width:440px;display:flex;flex-direction:column;gap:8px}
+  #akis div{align-self:flex-start;max-width:100%;font-size:24px;font-weight:700;padding:7px 16px;border-radius:16px;background:rgba(8,12,26,.72);
+    white-space:nowrap;overflow:hidden;text-overflow:ellipsis;animation:gir .35s ease-out}
+  #akis div.altin{background:rgba(255,205,60,.95);color:#1a1200}
+  #yildiz{position:absolute;right:22px;top:410px;width:300px;padding:12px 16px;border-radius:18px;background:rgba(8,12,26,.72);display:none}
+  #yildiz h4{margin:0 0 8px;font-size:21px;letter-spacing:2px;color:#ffd23f}
+  #yildizListe>div{display:flex;justify-content:space-between;gap:10px;font-size:23px;font-weight:700;line-height:1.45}
+  #yildizListe>div span:first-child{overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+  #yildizListe>div span:last-child{color:#ffd23f;font-variant-numeric:tabular-nums}
+
+  #afis{position:absolute;left:0;right:0;top:640px;text-align:center;opacity:0;transform:scale(.6);transition:opacity .25s,transform .35s cubic-bezier(.2,1.6,.4,1)}
+  #afis.acik{opacity:1;transform:scale(1)}
+  #afis .buyuk{font-size:150px;font-weight:900;letter-spacing:4px;line-height:1;-webkit-text-stroke:5px rgba(0,0,0,.55);paint-order:stroke fill;
+    text-shadow:0 8px 0 rgba(0,0,0,.4),0 0 60px currentColor}
+  #afis .kucuk{display:inline-block;margin-top:14px;font-size:46px;font-weight:900;padding:8px 30px;border-radius:30px;background:rgba(8,12,26,.85)}
+
+  #pen{position:absolute;left:50%;top:420px;transform:translateX(-50%);width:800px;padding:20px 26px 22px;border-radius:26px;text-align:center;display:none;
+    background:rgba(8,12,26,.88);box-shadow:0 10px 50px rgba(0,0,0,.6),inset 0 0 0 3px #ffd23f}
+  #pen .ust{font-size:28px;font-weight:900;letter-spacing:6px;color:#ffd23f}
+  #pen .ad{font-size:58px;font-weight:900;line-height:1.15;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+  #pen .cubuk{height:34px;border-radius:17px;overflow:hidden;display:flex;margin:14px 0 8px;background:#111;box-shadow:inset 0 0 0 2px rgba(255,255,255,.3)}
+  #pen .cubuk i{display:block;height:100%;transition:width .3s}
+  #pen .alt{display:flex;justify-content:space-between;font-size:24px;font-weight:800}
+  #pen .say{position:absolute;right:26px;top:14px;font-size:64px;font-weight:900;color:#ffd23f;font-variant-numeric:tabular-nums}
+
+  #ses{position:absolute;left:50%;top:50%;transform:translate(-50%,-50%);font-size:44px;font-weight:900;padding:26px 44px;border-radius:30px;background:rgba(255,205,60,.96);color:#1a1200;
+    pointer-events:auto;cursor:pointer;display:none}
+  #baglanti{position:absolute;left:22px;bottom:22px;font-size:22px;font-weight:700;padding:6px 14px;border-radius:12px;background:rgba(160,30,30,.9);display:none}
+  /* YouTube oynatıcısı: YouTube kuralları gereği görünür durur (sol alt köşe) */
+  #ytKutu{position:absolute;left:16px;bottom:16px;width:200px;height:200px;border-radius:14px;overflow:hidden;display:none;box-shadow:0 6px 24px rgba(0,0,0,.6)}
+  /* pavyon görünümü */
+  #pvUst,#pvCosku{display:none}
+  body.pavyon #skor,body.pavyon #olcer{display:none}
+  body.pavyon #pvUst{display:block;position:absolute;left:0;right:0;top:136px;text-align:center}
+  #pvAd{display:none}
+  #pvAd{font-size:86px;font-weight:900;letter-spacing:6px;line-height:1;color:#fff;text-shadow:0 0 12px #ff3fa4,0 0 34px #ff3fa4,0 0 70px #c2185b,0 4px 0 rgba(0,0,0,.5)}
+  #pvKisi{display:inline-block;margin-top:0;font-size:26px;font-weight:800;padding:6px 20px;border-radius:18px;background:rgba(20,6,28,.75);color:#ffd23f}
+  body.pavyon #pvCosku{display:block;position:absolute;left:50%;top:206px;transform:translateX(-50%);width:760px}
+  #pvCosku .cubuk{height:22px;border-radius:11px;overflow:hidden;background:#1a0a22;box-shadow:inset 0 0 0 2px rgba(255,255,255,.25),0 4px 16px rgba(0,0,0,.5)}
+  #pvCosku .cubuk i{display:block;height:100%;width:0;background:linear-gradient(90deg,#7b2ff7,#ff3fa4,#ffd23f);transition:width .4s}
+  #pvCosku .yazi{text-align:center;font-size:20px;font-weight:800;letter-spacing:3px;margin-top:6px}
+  body.pavyon #ipucu{top:272px}
+  body.pavyon #akis,body.pavyon #yildiz{top:344px}
+  @keyframes gir{from{opacity:0;transform:translateX(-30px)}to{opacity:1;transform:none}}
+</style>
+<script type="importmap">{"imports":{"three":"/lib/three.module.js","three/addons/":"/lib/addons/"}}</script>
+</head>
+<body>
+<div id="cerceve">
+  <canvas id="c" width="1080" height="1920"></canvas>
+  <div id="ytKutu"></div>
+  <div id="hud">
+    <div id="skor">
+      <div class="tk a"><div class="renk" id="renkA"></div><div><div class="ad" id="adA"></div><div class="kisi" id="kisiA"></div></div></div>
+      <div id="sayi"><b id="skorYazi">0 - 0</b><span id="dakika">0'</span></div>
+      <div class="tk b"><div class="renk" id="renkB"></div><div><div class="ad" id="adB"></div><div class="kisi" id="kisiB"></div></div></div>
+    </div>
+    <div id="pvUst"><div id="pvAd">PAVYON</div><div id="pvKisi"></div></div>
+    <div id="pvCosku"><div class="cubuk"><i id="pvDolu"></i></div><div class="yazi golge">COŞKU</div></div>
+    <div id="olcer"><div class="cubuk"><i id="olcA"></i><i id="olcB"></i></div><div class="yazi golge">TRİBÜN SESİ</div></div>
+    <div id="ipucu" class="golge"></div>
+    <div id="akis"></div>
+    <div id="yildiz"><h4>GÜNÜN YILDIZLARI</h4><div id="yildizListe"></div></div>
+    <div id="afis"><div class="buyuk" id="afisB"></div><div class="kucuk" id="afisK"></div></div>
+    <div id="pen"><div class="say" id="penSay"></div><div class="ust">PENALTI</div><div class="ad" id="penAd"></div>
+      <div class="cubuk"><i id="penD"></i><i id="penY"></i></div>
+      <div class="alt"><span id="penSol"></span><span id="penSag"></span></div></div>
+    <div id="baglanti">Köprü bağlantısı yok</div>
+    <div id="ses">Sesi açmak için tıkla</div>
+  </div>
+</div>
+<script type="module" src="/js/giris.js"></script>
+</body>
+</html>

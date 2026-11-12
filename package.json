@@ -1,0 +1,15 @@
+{
+  "name": "tribun-yayini",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "description": "Tribün: TikTok LIVE için etkileşimli stadyum yayını (yalnızca bu bilgisayarda çalışır)",
+  "scripts": {
+    "start": "node kopru.mjs"
+  },
+  "dependencies": {
+    "three": "^0.187.0",
+    "tiktok-live-connector": "^2.5.0",
+    "ws": "^8.22.2"
+  }
+}

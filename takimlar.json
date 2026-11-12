@@ -1,0 +1,95 @@
+{
+  "_not": "Kadrolar elle düzenlenir. 'desen': duz | cizgili | parcali. 'anahtar': izleyicinin yoruma yazınca o tribüne geçtiği kelimeler (küçük harf, Türkçe karaktersiz). Oyuncular dizilişe göre sırayla: kaleci, savunma, orta saha, forvet.",
+  "takimlar": [
+    {
+      "id": "gs",
+      "ad": "Galatasaray",
+      "kisa": "GS",
+      "renk1": "#c8102e",
+      "renk2": "#fdb912",
+      "desen": "parcali",
+      "sort": "#c8102e",
+      "kaleci": "#1fa37a",
+      "anahtar": ["gs", "galatasaray", "cimbom", "aslan"],
+      "dizilis": "4-2-3-1",
+      "oyuncular": [
+        [1, "Uğurcan"], [7, "Sallai"], [6, "Sanchez"], [42, "Abdülkerim"], [4, "Jakobs"],
+        [34, "Torreira"], [99, "Lemina"],
+        [10, "Sane"], [8, "Sara"], [53, "Barış Alper"],
+        [45, "Osimhen"]
+      ]
+    },
+    {
+      "id": "fb",
+      "ad": "Fenerbahçe",
+      "kisa": "FB",
+      "renk1": "#fedd00",
+      "renk2": "#0b1f4b",
+      "desen": "cizgili",
+      "sort": "#ffffff",
+      "kaleci": "#e4572e",
+      "anahtar": ["fb", "fener", "fenerbahce", "kanarya"],
+      "dizilis": "4-2-3-1",
+      "oyuncular": [
+        [31, "Ederson"], [27, "Semedo"], [37, "Skriniar"], [24, "Oosterwolde"], [3, "Brown"],
+        [17, "Kante"], [6, "Guendouzi"],
+        [45, "Nene"], [94, "Talisca"], [9, "Kerem"],
+        [26, "Cherif"]
+      ]
+    },
+    {
+      "id": "bjk",
+      "ad": "Beşiktaş",
+      "kisa": "BJK",
+      "renk1": "#f4f4f4",
+      "renk2": "#111111",
+      "desen": "cizgili",
+      "sort": "#111111",
+      "kaleci": "#3aa0ff",
+      "anahtar": ["bjk", "besiktas", "kartal"],
+      "dizilis": "4-2-3-1",
+      "oyuncular": [
+        [30, "Ersin"], [62, "Murillo"], [35, "Djalo"], [53, "Emirhan"], [33, "Rıdvan"],
+        [10, "Orkun"], [4, "Ndidi"],
+        [11, "Cengiz"], [27, "Rafa Silva"], [19, "El Bilal"],
+        [9, "Abraham"]
+      ]
+    },
+    {
+      "id": "ts",
+      "ad": "Trabzonspor",
+      "kisa": "TS",
+      "renk1": "#7b1e3a",
+      "renk2": "#4aa3df",
+      "desen": "cizgili",
+      "sort": "#7b1e3a",
+      "kaleci": "#f2c14e",
+      "anahtar": ["ts", "trabzon", "trabzonspor", "firtina"],
+      "dizilis": "4-2-3-1",
+      "oyuncular": [
+        [24, "Onana"], [20, "Pina"], [15, "Savic"], [44, "Batagov"], [19, "Mustafa"],
+        [42, "Oulai"], [26, "Folcarelli"],
+        [22, "Zubkov"], [99, "Augusto"], [70, "Olaigbe"],
+        [30, "Onuachu"]
+      ]
+    },
+    {
+      "id": "amed",
+      "ad": "Amedspor",
+      "kisa": "AMED",
+      "renk1": "#00a651",
+      "renk2": "#e30613",
+      "desen": "cizgili",
+      "sort": "#00a651",
+      "kaleci": "#f2c14e",
+      "anahtar": ["amed", "amedspor", "amedsk", "diyarbakir"],
+      "dizilis": "4-2-3-1",
+      "oyuncular": [
+        [1, "Lafont"], [2, "Krasniqi"], [4, "Dellova"], [5, "Bates"], [3, "Umut"],
+        [6, "Raveloson"], [8, "Furkan"],
+        [10, "Saba"], [7, "Sor"], [11, "Lutin"],
+        [9, "Orban"]
+      ]
+    }
+  ]
+}

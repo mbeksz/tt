@@ -1,0 +1,298 @@
+<!doctype html>
+<html lang="tr">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Tribün — Kontrol paneli</title>
+<style>
+  :root{color-scheme:dark}
+  body{margin:0;background:#0d1120;color:#e9ecf5;font:15px/1.45 system-ui,-apple-system,"Segoe UI",Roboto,Arial,sans-serif}
+  header{display:flex;flex-wrap:wrap;gap:10px 18px;align-items:center;padding:12px 18px;background:#141a30;border-bottom:1px solid #263056;position:sticky;top:0;z-index:2}
+  header h1{font-size:18px;margin:0 8px 0 0}
+  .rozet{padding:4px 10px;border-radius:12px;background:#263056;font-size:13px}
+  .rozet.iyi{background:#14532d}.rozet.kotu{background:#7f1d1d}
+  main{display:grid;grid-template-columns:repeat(auto-fit,minmax(330px,1fr));gap:14px;padding:14px;max-width:1500px;margin:0 auto}
+  section{background:#141a30;border:1px solid #263056;border-radius:12px;padding:14px}
+  h2{font-size:14px;margin:0 0 10px;color:#ffd23f;letter-spacing:.5px;text-transform:uppercase}
+  label{display:block;margin:8px 0 3px;font-size:13px;color:#aab3d0}
+  select,input[type=text],input[type=number]{width:100%;box-sizing:border-box;padding:8px 9px;border-radius:8px;border:1px solid #33407a;background:#0d1120;color:#fff;font:inherit}
+  input[type=range]{width:100%}
+  button{padding:8px 12px;border-radius:8px;border:1px solid #3b4a8c;background:#243069;color:#fff;font:inherit;cursor:pointer}
+  button:hover{background:#31409a}
+  button.ana{background:#c2410c;border-color:#ea580c}
+  button.ana:hover{background:#ea580c}
+  .sira{display:flex;flex-wrap:wrap;gap:6px;margin-top:8px}
+  .iki{display:grid;grid-template-columns:1fr 1fr;gap:8px}
+  .uc{display:grid;grid-template-columns:1fr 1fr 1fr;gap:8px}
+  .liste{margin-top:6px;max-height:210px;overflow:auto;border:1px solid #263056;border-radius:8px}
+  .liste div{display:flex;justify-content:space-between;align-items:center;gap:8px;padding:6px 9px;border-bottom:1px solid #1d2545}
+  .liste div:last-child{border-bottom:0}
+  .liste .calan{background:#1f2a5c;font-weight:700}
+  .bos{padding:10px;color:#8b94b5;font-size:13px}
+  small{display:block;color:#8b94b5;margin-top:8px;font-size:12.5px;line-height:1.4}
+  .anahtar{display:flex;align-items:center;gap:8px;margin-top:10px}
+  .anahtar input{width:18px;height:18px}
+  #bilgi{position:fixed;left:50%;bottom:18px;transform:translateX(-50%);background:#7f1d1d;padding:10px 16px;border-radius:10px;display:none;z-index:5}
+  code{background:#0d1120;padding:1px 5px;border-radius:5px}
+  #tip{display:flex;gap:10px;padding:14px 14px 0;max-width:1500px;margin:0 auto;box-sizing:border-box}
+  #tip button{flex:1;padding:14px 10px;font-size:17px;font-weight:700;border-radius:12px;background:#141a30;border:2px solid #263056;color:#aab3d0}
+  #tip button span{display:block;font-size:12.5px;font-weight:400;margin-top:3px}
+  #tip button.secili{background:#c2410c;border-color:#fb923c;color:#fff}
+  body.mod-mac .m-pavyon,body.mod-pavyon .m-mac{display:none}
+  h2 i{font-style:normal;color:#8b94b5;text-transform:none;letter-spacing:0;font-weight:400}
+  .dort{display:grid;grid-template-columns:repeat(4,1fr);gap:8px}
+  @media(max-width:520px){.dort{grid-template-columns:1fr 1fr}}
+</style>
+</head>
+<body class="mod-mac">
+<header>
+  <h1>Yayın paneli</h1>
+  <span class="rozet kotu" id="rKopru">köprü yok</span>
+  <span class="rozet" id="rTiktok">TikTok: —</span>
+  <span class="rozet" id="rMac">maç: —</span>
+  <span class="rozet" id="rSes">ses: —</span>
+  <a href="/" target="_blank" style="color:#8fb4ff;margin-left:auto">Yayın sayfasını aç ↗</a>
+</header>
+<div id="tip">
+  <button data-mod="mac">Maç yayını<span>stadyum, tribün, futbol</span></button>
+  <button data-mod="pavyon">Pavyon yayını<span>sahne, pist, masalar, roller</span></button>
+</div>
+<main>
+  <section class="m-mac">
+    <h2>Maç</h2>
+    <div class="iki">
+      <div><label for="tA">Sol tribün takımı</label><select id="tA"></select></div>
+      <div><label for="tB">Sağ tribün takımı</label><select id="tB"></select></div>
+    </div>
+    <label for="sure">Maç süresi (dakika)</label>
+    <input type="number" id="sure" min="1" max="60" step="1">
+    <div class="sira"><button class="ana" id="bYeni">Yeni maç başlat</button><button data-tribun="0">Sol tribünü göster</button><button data-tribun="1">Sağ tribünü göster</button></div>
+    <small>Takım değiştirince maç baştan başlar. Kadrolar ve renkler <code>takimlar.json</code> dosyasından okunur; dosyayı değiştirince yayın sayfasını yenile.</small>
+  </section>
+
+  <section class="m-mac">
+    <h2>Tribün</h2>
+    <label for="dolgu">İsimsiz dolgu seyirci: tribünün <b id="dolguY"></b>'i dolu görünsün</label>
+    <input type="range" id="dolgu" min="0" max="100" step="5">
+    <div class="sira"><button data-hareket="dalga">Dalga</button><button data-hareket="zipla">Zıpla</button><button data-hareket="isik">Işıklar</button><button data-hareket="fisek">Havai fişek</button></div>
+    <small>Dolgu seyircinin adı yoktur, yalnızca tribünü doldurur. Gerçek izleyici geldikçe en görünür koltuklara o oturur.</small>
+  </section>
+
+  <section class="m-mac">
+    <h2>Maç hediyeleri (jeton)</h2>
+    <div class="uc">
+      <div><label for="eGir">Sahaya gir</label><input type="number" id="eGir" min="1"></div>
+      <div><label for="ePen">Penaltı</label><input type="number" id="ePen" min="1"></div>
+      <div><label for="eOzel">Özel penaltı</label><input type="number" id="eOzel" min="1"></div>
+    </div>
+    <small>1–4 jeton meşale, 5–9 bayrak, 10 ve üstü isimli pankart. Eşikler hediyenin toplam jetonuna göre uygulanır (seri atışlar toplanır).</small>
+  </section>
+
+  <section class="m-mac">
+    <h2>Sahadaki izleyiciler</h2>
+    <div class="liste" id="misafirler"><div class="bos">Şu an kimse yok.</div></div>
+    <label>Penaltı sırası</label>
+    <div id="kuyruk" class="bos" style="padding:0">Boş</div>
+  </section>
+
+  <section class="m-pavyon">
+    <h2>Pavyon</h2>
+    <label for="pavyonAd">Tabeladaki yazı</label>
+    <input type="text" id="pavyonAd" maxlength="22" placeholder="PAVYON">
+    <label>Elle başlat</label>
+    <div class="sira"><button class="ana" data-hareket="fasil">Fasıl başlat</button><button data-hareket="pecete">Peçete</button><button data-hareket="konfeti">Konfeti</button><button data-hareket="para">Para yağmuru</button></div>
+    <small>İzleyici yorum yazınca masaya gelir. <code>oyna</code> yazan ortadaki ışıklı piste çıkar, <code>alkış</code> yazanın masasından peçete uçar, <code>hesap</code> yazınca şaka hesap gelir. Yorum ve beğeni coşkuyu doldurur; dolunca fasıl kendiliğinden başlar.</small>
+  </section>
+
+  <section class="m-pavyon">
+    <h2>Pavyon hediyeleri (jeton)</h2>
+    <div class="dort">
+      <div><label for="pKonsla">Konsla oyna</label><input type="number" id="pKonsla" min="1"></div>
+      <div><label for="pSahne">Sahneye çık</label><input type="number" id="pSahne" min="1"></div>
+      <div><label for="pGarson">Garson ol</label><input type="number" id="pGarson" min="1"></div>
+      <div><label for="pKons">Kons ol</label><input type="number" id="pKons" min="1"></div>
+      <div><label for="pSazci">Sazcı ol</label><input type="number" id="pSazci" min="1"></div>
+      <div><label for="pAssolist">Assolist ol</label><input type="number" id="pAssolist" min="1"></div>
+      <div><label for="pPatron">Patron ol</label><input type="number" id="pPatron" min="1"></div>
+    </div>
+    <small>1–4 jeton peçete, 5–9 çiçek, 10 ve üstü istek parça. "Konsla oyna": bir kons gelir, ortadaki ışıklı pistte karşılıklı oynarlar (25 sn). "Sahneye çık": assolistin yanında oynar (25 sn). Roller 3 dakika sürer. Hediyenin toplam jetonunu karşılayan en yüksek basamak uygulanır.</small>
+  </section>
+
+  <section class="m-pavyon">
+    <h2>Rol alanlar</h2>
+    <div class="liste" id="roller"><div class="bos">Şu an kimse yok.</div></div>
+  </section>
+
+  <section>
+    <h2>Müzik ve ses <i>· iki yayında ortak</i></h2>
+    <div class="iki"><div><label for="kaynak">Müzik kaynağı</label><select id="kaynak"><option value="dosya">muzik klasöründeki dosyalar</option><option value="youtube">YouTube bağlantısı</option></select></div>
+      <div><label for="ytAdres">YouTube oynatma listesi ya da video</label><input type="text" id="ytAdres" placeholder="https://www.youtube.com/playlist?list=…"></div></div>
+    <div class="sira"><button class="ana" id="bCal">Çal</button><button id="bDur">Duraklat</button><button id="bSonraki">Sıradaki</button><button id="bYenile">Listeyi yenile</button></div>
+    <div class="liste" id="muzikListe"><div class="bos">Liste boş. Şarkı dosyalarını <code>muzik</code> klasörüne koy.</div></div>
+    <label for="mSes">Müzik sesi</label><input type="range" id="mSes" min="0" max="1" step="0.05">
+    <label for="eSes">Efekt sesleri (tezahürat, alkış, darbuka)</label><input type="range" id="eSes" min="0" max="1" step="0.05">
+    <div class="anahtar"><input type="checkbox" id="karisik"><label for="karisik" style="margin:0">Karışık çal</label></div>
+    <div class="anahtar"><input type="checkbox" id="spiker"><label for="spiker" style="margin:0">Spiker sesi (önemli anları sesli söyler)</label></div>
+    <small>YouTube seçiliyken bağlantıyı yapıştırıp Enter'a bas, sonra "Çal". Oynatıcı yayın ekranının sol alt köşesinde küçük bir kutu olarak görünür; bazı videolar başka sitede oynatılamaz, listede bunlar atlanır.</small>
+    <small>Müzik yayın sayfasının içinden çalar ve yayına oradan gider. Telifli şarkıda TikTok yayının sesini kapatabilir. Spiker, tarayıcının Türkçe sesini kullanır; yayın programının tarayıcısında ses yoksa çalışmaz.</small>
+  </section>
+
+  <section>
+    <h2>Görüntü <i>· iki yayında ortak</i></h2>
+    <label for="kalite">Kalite</label>
+    <select id="kalite"><option value="yuksek">Yüksek (en iyi görüntü)</option><option value="orta">Orta</option><option value="dusuk">Düşük (zayıf bilgisayar)</option></select>
+    <small>Yayın sayfasının kare hızı: <b id="fps">—</b>. 30'un altına düşüyorsa kaliteyi bir kademe indir. Yayın programında kaynağı 1080×1920 açmayı unutma.</small>
+  </section>
+
+  <section>
+    <h2>Test <i>· yayında değilken · <b id="testMod"></b></i></h2>
+    <div class="iki">
+      <div><label for="tAd">İzleyici adı</label><input type="text" id="tAd" value="Ayşe"></div>
+      <div><label for="tMetin">Yorum</label><input type="text" id="tMetin" ></div>
+    </div>
+    <div class="m-mac"><label for="tTakim">Hangi takım için (yorum, beğeni ve hediye bu takımın tribününden gelir)</label>
+    <select id="tTakim"></select></div>
+    <label>Hazır yorumlar</label>
+    <div class="sira" id="hazirYorum"></div>
+    <div class="sira"><button class="ana" id="bYorum">Yorum gönder</button><button data-begeni="15">Beğeni ×15</button><button data-begeni="200">Beğeni ×200</button><button id="bGiris">Giriş</button><button id="bTakip">Takip</button></div>
+    <label>Hediye (jeton)</label>
+    <div class="sira" id="hediyeler"></div>
+    <label>Kalabalık dene (rastgele adlarla)</label>
+    <div class="sira"><button data-kalabalik="10">+10</button><button data-kalabalik="100">+100</button><button data-kalabalik="500">+500</button></div>
+    <small class="m-mac">Gerçek yayında izleyici takımını yoruma yazarak seçer (ör. <code>gs</code>, <code>fb</code>); hediyeyi atınca o takımın formasıyla sahaya girer ya da penaltıyı o takım adına kullanır.</small>
+    <small>Test olayları yalnızca köprü TikTok yayınına bağlı değilken çalışır. Canlı yayında sahte izleyici, yorum ya da hediye gösterilmez.</small>
+  </section>
+</main>
+<div id="bilgi"></div>
+<script>
+"use strict";
+const $ = id => document.getElementById(id);
+let ws, ayar = null, takimlar = [], muzik = [], calan = '';
+const gonder = v => { if (ws && ws.readyState === 1) ws.send(JSON.stringify(v)); };
+const ayarYaz = deger => gonder({ t: 'ayar', deger });
+const komut = (ne, ek = {}) => gonder({ t: 'komut', ne, ...ek });
+const test = olay => gonder({ t: 'test', olay });
+function bilgi(m) { const el = $('bilgi'); el.textContent = m; el.style.display = 'block'; clearTimeout(bilgi.t); bilgi.t = setTimeout(() => el.style.display = 'none', 3500); }
+
+const PESIK = [['pKonsla', 'konslaOyna'], ['pSahne', 'sahne'], ['pGarson', 'garson'], ['pKons', 'kons'], ['pSazci', 'sazci'], ['pAssolist', 'assolist'], ['pPatron', 'patron']];
+function ayarGoster() {
+  if (!ayar) return;
+  for (const [id, deger] of [['tA', ayar.takimA], ['tB', ayar.takimB]]) {
+    const s = $(id); s.textContent = '';
+    for (const t of takimlar) { const o = document.createElement('option'); o.value = t.id; o.textContent = t.ad; s.appendChild(o); }
+    s.value = deger;
+  }
+  { const s = $('tTakim'), eski = s.value; s.textContent = '';
+    for (const [v, y] of [['', 'Otomatik (az kalabalık taraf)'], ['0', takimlar.find(t => t.id === ayar.takimA)?.ad + ' için'], ['1', takimlar.find(t => t.id === ayar.takimB)?.ad + ' için']]) { const o = document.createElement('option'); o.value = v; o.textContent = y; s.appendChild(o); }
+    s.value = eski; }
+  if (document.activeElement !== $('sure')) $('sure').value = Math.round(ayar.macSuresi / 60);
+  $('dolgu').value = ayar.dolgu; $('dolguY').textContent = '%' + ayar.dolgu;
+  for (const [id, a] of [['eGir', 'sahayaGir'], ['ePen', 'penalti'], ['eOzel', 'ozel']]) if (document.activeElement !== $(id)) $(id).value = ayar.esik[a];
+  $('mSes').value = ayar.muzikSes; $('eSes').value = ayar.efektSes;
+  $('karisik').checked = ayar.muzikSira === 'karisik'; $('spiker').checked = ayar.spiker;
+  const pvMod = ayar.mod === 'pavyon'; document.body.className = pvMod ? 'mod-pavyon' : 'mod-mac';
+  document.querySelectorAll('[data-mod]').forEach(b => b.classList.toggle('secili', b.dataset.mod === (pvMod ? 'pavyon' : 'mac')));
+  $('testMod').textContent = pvMod ? 'pavyon' : 'maç'; $('tMetin').placeholder = pvMod ? 'oyna, alkış, hesap…' : 'gs, dalga, beni göster…';
+  for (const [id, a] of PESIK) if (document.activeElement !== $(id)) $(id).value = ayar.pavyonEsik?.[a] ?? '';
+  if (document.activeElement !== $('pavyonAd')) $('pavyonAd').value = ayar.pavyonAd || '';
+  { // hediye düğmeleri yayın tipine ve eşiklere göre
+    const e = ayar.esik, pv = pvMod, p = ayar.pavyonEsik || {};
+    const liste = pv ? [[1, 'peçete'], [5, 'çiçek'], [10, 'istek parça'], [p.konslaOyna, 'konsla oyna'], [p.sahne, 'sahneye çık'], [p.garson, 'garson'], [p.kons, 'kons'], [p.sazci, 'sazcı'], [p.assolist, 'assolist'], [p.patron, 'patron']]
+      : [[1, 'meşale'], [5, 'bayrak'], [10, 'pankart'], [e.sahayaGir, 'sahaya gir'], [e.penalti, 'penaltı'], [e.ozel, 'özel penaltı']];
+    const kutu = $('hediyeler'); kutu.textContent = '';
+    for (const [j, ad] of liste) { const b = document.createElement('button'); b.dataset.jeton = j; b.textContent = `${j} · ${ad}`; kutu.appendChild(b); }
+    const hy = $('hazirYorum'); hy.textContent = '';
+    const tk = id => takimlar.find(t => t.id === id)?.kisa.toLocaleLowerCase('tr') || '';
+    for (const y of pv ? ['oyna', 'alkış', 'hesap', 'beni göster'] : [tk(ayar.takimA), tk(ayar.takimB), 'dalga', 'zıpla', 'ışık', 'beni göster']) { const b = document.createElement('button'); b.dataset.yorum = y; b.textContent = y; hy.appendChild(b); }
+  }
+  $('kaynak').value = ayar.muzikKaynak || 'dosya'; $('kalite').value = ayar.kalite || 'yuksek';
+  if (document.activeElement !== $('ytAdres')) $('ytAdres').value = ayar.youtube || '';
+}
+function muzikGoster() {
+  const kutu = $('muzikListe'); kutu.textContent = '';
+  if (!muzik.length) { const d = document.createElement('div'); d.className = 'bos'; d.textContent = 'Liste boş. Şarkı dosyalarını muzik klasörüne koyup "Listeyi yenile"ye bas.'; kutu.appendChild(d); return; }
+  muzik.forEach((ad, i) => {
+    const d = document.createElement('div'), s = document.createElement('span'), b = document.createElement('button');
+    s.textContent = ad; b.textContent = 'Çal'; b.onclick = () => { ayarYaz({ muzikAcik: true }); komut('muzik', { is: 'cal', i }); };
+    if (ad === calan) d.className = 'calan';
+    d.append(s, b); kutu.appendChild(d);
+  });
+}
+function durumGoster(d) {
+  $('rMac').textContent = d.mod === 'pavyon' ? `pavyon: ${d.sayi[0]} misafir · coşku %${d.cosku}${d.faz === 'fasil' ? ' · FASIL' : ''}` : `maç: ${d.skor[0]} - ${d.skor[1]} · ${d.dakika}' · ${d.sayi[0]} / ${d.sayi[1]} taraftar`;
+  $('rSes').textContent = d.muzik.sesHazir ? (d.muzik.caliyor ? 'çalıyor: ' + d.muzik.calan : 'ses açık') : 'ses kapalı (yayın sayfasına bir kez tıkla)';
+  $('rSes').className = 'rozet ' + (d.muzik.sesHazir ? 'iyi' : 'kotu');
+  $('fps').textContent = (d.fps || 0) + ' kare/sn';
+  if (calan !== d.muzik.calan) { calan = d.muzik.calan; muzikGoster(); }
+  const kutu = $(d.mod === 'pavyon' ? 'roller' : 'misafirler'); kutu.textContent = '';
+  if (!d.misafirler.length) { const b = document.createElement('div'); b.className = 'bos'; b.textContent = 'Şu an kimse yok.'; kutu.appendChild(b); }
+  for (const m of d.misafirler) {
+    const satir = document.createElement('div'), s = document.createElement('span'), b = document.createElement('button');
+    s.textContent = m.rol ? `${m.ad} · ${m.rol}` : `${m.ad} · ${takimlar.find(t => t.id === (m.ti ? ayar.takimB : ayar.takimA))?.kisa || ''} #${m.no}`;
+    b.textContent = 'Göster'; b.onclick = () => komut('goster', { k: m.k });
+    satir.append(s, b); kutu.appendChild(satir);
+  }
+  $('kuyruk').textContent = (d.penalti ? 'Şimdi: ' + d.penalti + (d.kuyruk.length ? ' · ' : '') : '') + (d.kuyruk.length ? 'Sırada: ' + d.kuyruk.join(', ') : d.penalti ? '' : 'Boş');
+}
+function tiktokGoster(t) {
+  $('rTiktok').textContent = 'TikTok: ' + t.mesaj + (t.bagli ? ` · ${t.izleyici} izleyici` : '');
+  $('rTiktok').className = 'rozet ' + (t.bagli ? 'iyi' : '');
+}
+function baglan() {
+  ws = new WebSocket(`ws://${location.host}`);
+  ws.onopen = () => { $('rKopru').textContent = 'köprü bağlı'; $('rKopru').className = 'rozet iyi'; gonder({ t: 'rol', rol: 'panel' }); };
+  ws.onclose = () => { $('rKopru').textContent = 'köprü yok'; $('rKopru').className = 'rozet kotu'; setTimeout(baglan, 2000); };
+  ws.onmessage = m => {
+    let v; try { v = JSON.parse(m.data); } catch { return; }
+    if (v.t === 'merhaba') { ayar = v.ayar; takimlar = v.takimlar || []; muzik = v.muzik || []; ayarGoster(); muzikGoster(); tiktokGoster(v.tiktok); }
+    else if (v.t === 'ayar') { ayar = v.ayar; ayarGoster(); }
+    else if (v.t === 'muzik') { muzik = v.liste || []; muzikGoster(); }
+    else if (v.t === 'tiktok') tiktokGoster(v);
+    else if (v.t === 'durum') durumGoster(v);
+    else if (v.t === 'bilgi') bilgi(v.mesaj);
+  };
+}
+baglan();
+
+// ---- ayarlar ----
+$('tA').onchange = () => { if ($('tA').value === $('tB').value) { bilgi('İki tribün aynı takım olamaz.'); ayarGoster(); return; } ayarYaz({ takimA: $('tA').value }); };
+$('tB').onchange = () => { if ($('tA').value === $('tB').value) { bilgi('İki tribün aynı takım olamaz.'); ayarGoster(); return; } ayarYaz({ takimB: $('tB').value }); };
+$('sure').onchange = () => ayarYaz({ macSuresi: Math.max(1, Number($('sure').value) || 5) * 60 });
+$('dolgu').oninput = () => { $('dolguY').textContent = '%' + $('dolgu').value; ayarYaz({ dolgu: Number($('dolgu').value) }); };
+for (const [id, a] of [['eGir', 'sahayaGir'], ['ePen', 'penalti'], ['eOzel', 'ozel']]) $(id).onchange = () => ayarYaz({ esik: { ...ayar.esik, [a]: Number($(id).value) } });
+$('mSes').oninput = () => ayarYaz({ muzikSes: Number($('mSes').value) });
+$('eSes').oninput = () => ayarYaz({ efektSes: Number($('eSes').value) });
+$('karisik').onchange = () => ayarYaz({ muzikSira: $('karisik').checked ? 'karisik' : 'sirali' });
+$('spiker').onchange = () => ayarYaz({ spiker: $('spiker').checked });
+document.querySelectorAll('[data-mod]').forEach(b => b.onclick = () => ayarYaz({ mod: b.dataset.mod }));
+for (const [id, a] of PESIK) $(id).onchange = () => ayarYaz({ pavyonEsik: { ...ayar.pavyonEsik, [a]: Number($(id).value) } });
+$('hazirYorum').onclick = e => { const b = e.target.closest('[data-yorum]'); if (b) test({ tur: 'yorum', ...kim(), metin: b.dataset.yorum }); };
+$('pavyonAd').onchange = () => ayarYaz({ pavyonAd: $('pavyonAd').value });
+$('kaynak').onchange = () => ayarYaz({ muzikKaynak: $('kaynak').value });
+$('kalite').onchange = () => ayarYaz({ kalite: $('kalite').value });
+$('ytAdres').onchange = () => { const v = $('ytAdres').value.trim(); if (v && !/^https:\/\/((www|m|music)\.)?(youtube\.com|youtu\.be)\//i.test(v)) { bilgi('Bu bir YouTube bağlantısı değil.'); return; } ayarYaz({ youtube: v, muzikKaynak: v ? 'youtube' : $('kaynak').value }); };
+$('bYeni').onclick = () => komut('yeniMac');
+document.querySelectorAll('[data-tribun]').forEach(b => b.onclick = () => komut('tribunGoster', { ti: Number(b.dataset.tribun) }));
+document.querySelectorAll('[data-hareket]').forEach(b => b.onclick = () => komut('hareket', { is: b.dataset.hareket }));
+// ---- müzik ----
+$('bCal').onclick = () => { ayarYaz({ muzikAcik: true }); komut('muzik', { is: 'cal' }); };
+$('bDur').onclick = () => { ayarYaz({ muzikAcik: false }); komut('muzik', { is: 'dur' }); };
+$('bSonraki').onclick = () => { ayarYaz({ muzikAcik: true }); komut('muzik', { is: 'sonraki' }); };
+$('bYenile').onclick = () => gonder({ t: 'muzikYenile' });
+// ---- test ----
+const kim = () => ({ ad: $('tAd').value.trim() || 'izleyici', k: $('tAd').value.trim() || 'izleyici', ...($('tTakim').value === '' ? {} : { ti: Number($('tTakim').value) }) });
+$('bYorum').onclick = () => test({ tur: 'yorum', ...kim(), metin: $('tMetin').value });
+$('tMetin').onkeydown = e => { if (e.key === 'Enter') $('bYorum').click(); };
+$('bGiris').onclick = () => test({ tur: 'giris', ...kim() });
+$('bTakip').onclick = () => test({ tur: 'takip', ...kim() });
+document.querySelectorAll('[data-begeni]').forEach(b => b.onclick = () => test({ tur: 'begeni', ...kim(), adet: Number(b.dataset.begeni) }));
+$('hediyeler').onclick = e => { const b = e.target.closest('[data-jeton]'); if (b) test({ tur: 'hediye', ...kim(), jeton: Number(b.dataset.jeton), adet: 1, hediye: 'test' }); };
+const ADLAR = ['Ahmet', 'Mehmet', 'Ayşe', 'Fatma', 'Emre', 'Zeynep', 'Can', 'Elif', 'Burak', 'Selin', 'Mert', 'Deniz', 'Kaan', 'Ece', 'Oğuz', 'İrem', 'Yusuf', 'Buse', 'Tolga', 'Gizem'];
+let testNo = 0;
+document.querySelectorAll('[data-kalabalik]').forEach(b => b.onclick = () => {
+  const n = Number(b.dataset.kalabalik), a = takimlar.find(t => t.id === ayar.takimA), c = takimlar.find(t => t.id === ayar.takimB);
+  for (let i = 0; i < n; i++) { const ad = ADLAR[(Math.random() * ADLAR.length) | 0] + (++testNo); test({ tur: 'yorum', ad, k: ad, metin: ayar.mod === 'pavyon' ? '' : Math.random() < .5 ? a.kisa : c.kisa }); }
+});
+</script>
+</body>
+</html>
